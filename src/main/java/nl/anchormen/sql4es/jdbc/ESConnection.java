@@ -31,7 +31,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-//import org.elasticsearch.test.ESIntegTestCase;
 import org.elasticsearch.common.xcontent.XContentElasticsearchExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,19 +91,16 @@ public class ESConnection implements Connection{
 	 * @throws SQLException
 	 */
 	private Client buildClient() throws SQLException {
-		/*if(props.containsKey("test")){ // used for integration tests
-			return ESIntegTestCase.client();
-		}else*/ try {
+		 try {
 			Properties properties = new Properties();
-
             properties.put("client.type", "transport");
-            properties.put("http.type.default", "netty4");
+            properties.put("http.type.default", "nio-http-transport");
             properties.put("network.server", "false");
-            properties.put("node.name", "_client_");
+            properties.put("node.name", "_node_");
+			properties.put("client.transport.sniff", "true");
             properties.put("transport.features.transport_client", "true");
             properties.put("transport.ping_schedule", "5s");
-            properties.put("transport.type.default", "netty4");
-
+            properties.put("transport.type.default", "nio-transport");
 			if(props.containsKey("cluster.name")){
 				properties.put("request.headers.X-Found-Cluster", props.get("cluster.name"));
 			} else {
@@ -112,15 +108,11 @@ public class ESConnection implements Connection{
                 properties.put("cluster.name", "elasticsearch");
 			}
 
-/*			if(props.containsKey("ssl")){
-				settingsBuilder.put("shield.transport.ssl", true);
-			}*/
-
             Settings.Builder builder = Settings.builder();
             properties.forEach((k, v) -> builder.put(k.toString(), v.toString()));
             Settings settings = builder.build();
 
-            TransportClient client = new PreBuiltTransportClient(settings);/*.addPlugin(ShieldPlugin.class)*/
+            TransportClient client = new PreBuiltTransportClient(settings);
             client.addTransportAddress(new TransportAddress(InetAddress.getByName(host), port));
 			
 			// add additional hosts if set in URL query part

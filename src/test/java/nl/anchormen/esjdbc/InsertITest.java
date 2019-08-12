@@ -21,7 +21,7 @@ public class InsertITest extends Sql4EsBase {
 
 	@Test
 	public void withErrors() throws SQLException{
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		try{
 			st.executeUpdate("INSERT INTO mytype (col1, col2) VALUES (1, 2.0, 'hi there')");
 			assert(false);
@@ -46,13 +46,13 @@ public class InsertITest extends Sql4EsBase {
 	
 	@Test
 	public void insertValues() throws SQLException{
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		int res = st.executeUpdate("INSERT INTO "+index+".mytype (_id, col1, col2, col3) VALUES ('myid', 1, 2.0, 'hi there')");
 		assertEquals(1, res);
 		flush();
 		refresh();
 		Utils.sleep(1000);
-		Statement  st2 = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement  st2 = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st2.executeQuery("Select * from mytype");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(6, rsm.getColumnCount());
@@ -126,14 +126,14 @@ public class InsertITest extends Sql4EsBase {
 	@Test
 	public void insertNested() throws SQLException{
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		int res = st.executeUpdate("INSERT INTO "+index+".nested (myString, \"doc.myString\", \"doc.myInt\") VALUES ('hello!','hi there', 1), ('Hi!','good bye', 2)");
 		assertEquals(2, res);
 		flush();
 		refresh();
 		Utils.sleep(1000);
 		
-		Statement  st2 = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement  st2 = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st2.executeQuery("Select * from nested");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(6, rsm.getColumnCount());
@@ -152,7 +152,7 @@ public class InsertITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type1, true, 10);
 		refresh();
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		int res = st.executeUpdate("INSERT INTO type2 SELECT intNum from "+type1);
 		assertEquals(10, res);
 		flush();
@@ -205,7 +205,7 @@ public class InsertITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type1, true, 10);
 		refresh();
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		int res = st.executeUpdate("INSERT INTO type2 SELECT distinct bool, avg(intNum) as average from "+type1);
 		assertEquals(2, res);
 		flush();
@@ -228,7 +228,7 @@ public class InsertITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type1, true, 10, 3);
 		refresh();
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		int res = st.executeUpdate("INSERT INTO type2 SELECT longNum, nestedDoc FROM "+type1);
 		assertEquals(10, res);
 		flush();

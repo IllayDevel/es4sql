@@ -23,7 +23,7 @@ public class DeleteITest extends Sql4EsBase {
 	public void deleteFlat() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		assertRowCount(st, type, 10);
 		
 		assert(!st.execute("DELETE FROM "+type+" where intNum = 9"));
@@ -45,7 +45,7 @@ public class DeleteITest extends Sql4EsBase {
 	public void deleteNested() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10, 2);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		assertRowCount(st, type, 10);
 		
 		assert(!st.execute("DELETE FROM "+type+" where nestedDoc.intNum = 8"));

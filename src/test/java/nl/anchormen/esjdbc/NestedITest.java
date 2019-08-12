@@ -34,7 +34,7 @@ public class NestedITest extends ESIntegTestCase{
 	@Test
 	public void testNestedType() throws Exception{
 		indexDocs(10, 1);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("SELECT * FROM "+type+" WHERE intNum > 5");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(9, rsm.getColumnCount());
@@ -98,7 +98,7 @@ public class NestedITest extends ESIntegTestCase{
 	@Test
 	public void testInnerNestedType() throws Exception{
 		indexDocs(5, 2);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("SELECT * FROM "+type);
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(10, rsm.getColumnCount());

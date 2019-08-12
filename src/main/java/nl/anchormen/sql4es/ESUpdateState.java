@@ -14,18 +14,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.facebook.presto.sql.tree.*;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -486,7 +484,7 @@ public class ESUpdateState {
 			CreateIndexResponse response = client.admin().indices().prepareCreate(index).addMapping(type, json, XContentType.JSON).get();
 			if(!response.isAcknowledged()) throw new SQLException("Table creation failed because database '"+index+"' could not be created");
 		}else{
-			PutMappingResponse response = client.admin().indices().preparePutMapping(index).setType(type).setSource(json, XContentType.JSON).get();
+			AcknowledgedResponse response = client.admin().indices().preparePutMapping(index).setType(type).setSource(json, XContentType.JSON).get();
 			if(!response.isAcknowledged()) throw new SQLException("Table creation failed due to unknown reason");
 		}
 		this.statement.getConnection().getTypeMap(); // trigger a reload of the table&column set for the connection
@@ -560,8 +558,8 @@ public class ESUpdateState {
 		String[] indices = new String[relations.size()];
 		for(int i=0; i<relations.size(); i++) indices[i] = relations.get(i).getSource();
 		new SelectParser().process(querySpec.getSelect(), state);
-		
-		IndicesAliasesResponse response;
+
+		AcknowledgedResponse response;
 		if(querySpec.getWhere().isPresent()){
 			QueryBuilder query = new WhereParser().process(querySpec.getWhere().get(), state).getQuery();
 			response = client.admin().indices().prepareAliases().addAlias(indices, alias, query).execute().actionGet();
@@ -586,7 +584,7 @@ public class ESUpdateState {
 	public int execute(String sql, DropTable drop) throws SQLException {
 		String index = drop.getTableName().toString();
 		index = Heading.findOriginal(sql.trim()+";", index, "table\\s+",";");
-		DeleteIndexResponse response = client.admin().indices().prepareDelete(index).execute().actionGet();
+		AcknowledgedResponse response = client.admin().indices().prepareDelete(index).execute().actionGet();
 		if(!response.isAcknowledged()) throw new SQLException("Elasticsearch failed to delete the specified index");
 		return 0;
 	}
@@ -621,7 +619,7 @@ public class ESUpdateState {
 				if(amd.alias().equals(alias)) indices.add(key.value);
 			}
 		}
-		IndicesAliasesResponse response = client.admin().indices().prepareAliases().removeAlias(indices.toArray(new String[indices.size()]), alias).get();
+		AcknowledgedResponse response = client.admin().indices().prepareAliases().removeAlias(indices.toArray(new String[indices.size()]), alias).get();
 		if(!response.isAcknowledged()) throw new SQLException("Elasticsearch failed to delete the specified alias");
 		return 0;
 	}

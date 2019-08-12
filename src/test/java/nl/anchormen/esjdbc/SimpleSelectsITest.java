@@ -28,7 +28,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	@Test
 	public void resultTypingFlat() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 1);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select _id, _type, _index, intNum, longNum, floatNum, doubleNum,"
 				+ "shortNum, byteNum, bool, text, date, nestedDoc, numbers, docs FROM "+type+" limit 1");
 		ResultSetMetaData rsm = rs.getMetaData();
@@ -58,7 +58,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	@Test
 	public void resultTypingNested() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 1, 1);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select nestedDoc FROM "+type+" limit 1");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(12, rsm.getColumnCount());
@@ -79,7 +79,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	@Test
 	public void selectAll() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select * from "+type);
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(15, rsm.getColumnCount());
@@ -126,7 +126,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type, true, 10);
 		
 		// single range
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select _id, intNum, text as txt from "+type+" where intNum >= 5");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(3, rsm.getColumnCount());
@@ -199,7 +199,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 		}
 		assertEquals(4, count);
 		
-		PreparedStatement pst = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test")
+		PreparedStatement pst = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test")
 				.prepareStatement("select date from "+type+" where date > ?");
 		pst.setDate(1, new Date(2016-1900, 5, 5));
 		rs = pst.executeQuery();
@@ -235,7 +235,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type, true, 10);
 		
 		// exact string match
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select _id, intNum, text from "+type+" where text = 'Some text for document 3'");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(3, rsm.getColumnCount());
@@ -303,7 +303,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type, true, 10);
 		
 		// exact string match
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select text from "+type+" where text.analyzed = 'text'");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(1, rsm.getColumnCount());
@@ -351,7 +351,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	public void selectBool() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10, 1);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select bool from "+type+" where bool = True");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(1, rsm.getColumnCount());
@@ -429,7 +429,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	public void selectAndOr() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select _id as ID, intNum from "+type+" where intNum = 3 OR intNum = 9 OR intNum = 6");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(2, rsm.getColumnCount());
@@ -491,7 +491,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	public void LimitsAndMax() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select _id from "+type+" limit 3");
 		
 		int count = 0;
@@ -520,7 +520,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	@Test
 	public void getID() throws Exception{
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		int res = st.executeUpdate("INSERT INTO mytype (_id, myInt) VALUES ('id1', 1), ('id2', 2)");
 		assertEquals(2, res);
 		flush();
@@ -565,7 +565,7 @@ public class SimpleSelectsITest extends Sql4EsBase {
 	public void search() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("SELECT _score, text FROM "+type+" WHERE _search = 'text.analyzed:document'");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(2, rsm.getColumnCount());

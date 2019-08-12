@@ -17,7 +17,7 @@ public class Utils {
 	
 	// connection defaults
 	public static final String PREFIX = "jdbc:sql4es:";
-	public static final int PORT = 9300;
+	public static final int PORT = 8081;
 	
 	// defaults
 	private static final int FETCH_SIZE = 10000; // 10K is current max for ES

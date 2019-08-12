@@ -240,7 +240,7 @@ public class ESQueryState{
 			return rs;
 		}else{
 			// parse plain document hits
-			long total = esResponse.getHits().getTotalHits();
+			long total = esResponse.getHits().getTotalHits().value;
 			if(limit > 0) total = Math.min(total, limit);
 			ESResultSet rs = hitParser.parse(esResponse.getHits(), this.statement, this.heading, total, Utils.getIntProp(props, Utils.PROP_DEFAULT_ROW_LENGTH, 1000), useLateral, 0, null);
 			
@@ -251,7 +251,7 @@ public class ESQueryState{
 						.execute().actionGet();
 				rs = hitParser.parse(esResponse.getHits(), this.statement, this.heading, total, Utils.getIntProp(props, Utils.PROP_DEFAULT_ROW_LENGTH, 1000), useLateral, 0, rs);
 				// make sure the resultset does not contain more results than requested 
-				rs.setTotal(Math.min(esResponse.getHits().getTotalHits(), limit>0 ? limit : esResponse.getHits().getTotalHits()));
+				rs.setTotal(Math.min(esResponse.getHits().getTotalHits().value, limit>0 ? limit : esResponse.getHits().getTotalHits().value));
 			}			
 			
 			rs.executeComputations();

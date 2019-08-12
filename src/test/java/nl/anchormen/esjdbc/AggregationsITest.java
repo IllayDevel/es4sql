@@ -21,7 +21,7 @@ public class AggregationsITest extends Sql4EsBase {
 	public void testSimpleAggregations() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select count(*) from "+type);
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(1, rsm.getColumnCount());
@@ -100,7 +100,7 @@ public class AggregationsITest extends Sql4EsBase {
 	public void testGroupBy() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 100, 1);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select bool, count(*), max(intNum) as x, min(floatNum), avg(doubleNum) from "+type+" GROUP BY bool");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(5, rsm.getColumnCount());
@@ -171,7 +171,7 @@ public class AggregationsITest extends Sql4EsBase {
 	public void testGroupByWithWhereAndHaving() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 100, 1);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum), min(floatNum), avg(doubleNum) "
 				+ "from "+type+" WHERE shortNum >= 50 GROUP BY bool, nb");
 		ResultSetMetaData rsm = rs.getMetaData();
@@ -194,7 +194,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum), min(floatNum), avg(doubleNum) "
 				+ "from "+type+" WHERE shortNum >= 50 AND doubleNum < 60 GROUP BY bool, nb");
 		rsm = rs.getMetaData();
@@ -217,7 +217,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb HAVING m >= 99");
 		rsm = rs.getMetaData();
@@ -240,7 +240,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(1, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb HAVING max(intNum) >= 99");
 		rsm = rs.getMetaData();
@@ -263,7 +263,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(1, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*) as c, max(intNum), min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb HAVING c > 99999");
 		rsm = rs.getMetaData();
@@ -282,7 +282,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(0, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum), min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb HAVING count(*) > 99999");
 		rsm = rs.getMetaData();
@@ -301,7 +301,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(0, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, max(intNum) as maximus, "
 				+ "avg(doubleNum) as average from "+type+" GROUP BY bool, nb HAVING maximus > average");
 		count = 0;
@@ -317,7 +317,7 @@ public class AggregationsITest extends Sql4EsBase {
 	public void testGroupByWithOrder() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 100, 1);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb ORDER BY m");
 
@@ -331,7 +331,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb ORDER BY max(intNum)");
 		
@@ -345,7 +345,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb ORDER BY m ASC");
 
@@ -359,7 +359,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb ORDER BY max(intNum) ASC");
 
@@ -373,7 +373,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb ORDER BY m DESC");
 
@@ -387,7 +387,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" WHERE longNum > 78 GROUP BY bool, nb ORDER BY m DESC");
 		
@@ -401,7 +401,7 @@ public class AggregationsITest extends Sql4EsBase {
 		assertEquals(2, count);
 		rs.close();
 		
-		st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		rs = st.executeQuery("select bool, nestedDoc.bool as nb, count(*), max(intNum) m, min(floatNum), avg(doubleNum) "
 				+ "from "+type+" GROUP BY bool, nb ORDER BY m DESC LIMIT 2");
 		
@@ -418,7 +418,7 @@ public class AggregationsITest extends Sql4EsBase {
 	public void testDistinct() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 100, 1);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select distinct bool, count(*) from "+type);
 
 		int count = 0;

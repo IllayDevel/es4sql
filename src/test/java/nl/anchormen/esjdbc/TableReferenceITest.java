@@ -22,7 +22,7 @@ public class TableReferenceITest extends Sql4EsBase {
 	@Test
 	public void simpleQueries() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		
 		ResultSet rs = st.executeQuery("select * FROM "+type+" as t");
 		ResultSetMetaData rsm = rs.getMetaData();
@@ -69,7 +69,7 @@ public class TableReferenceITest extends Sql4EsBase {
 	@Test
 	public void aggregationQueries() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
 		
 		ResultSet rs = st.executeQuery("select distinct bool FROM "+type+" as t");
 		ResultSetMetaData rsm = rs.getMetaData();

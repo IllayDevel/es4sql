@@ -10,20 +10,20 @@ import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggregation;
-import org.elasticsearch.search.aggregations.metrics.avg.InternalAvg;
-import org.elasticsearch.search.aggregations.metrics.cardinality.InternalCardinality;
+import org.elasticsearch.search.aggregations.metrics.InternalAvg;
+import org.elasticsearch.search.aggregations.metrics.InternalCardinality;
 
 import nl.anchormen.sql4es.ESResultSet;
 import nl.anchormen.sql4es.model.Column;
 import nl.anchormen.sql4es.model.Utils;
 import nl.anchormen.sql4es.model.Column.Operation;
-import org.elasticsearch.search.aggregations.metrics.geobounds.InternalGeoBounds;
-import org.elasticsearch.search.aggregations.metrics.geocentroid.InternalGeoCentroid;
-import org.elasticsearch.search.aggregations.metrics.max.InternalMax;
-import org.elasticsearch.search.aggregations.metrics.min.InternalMin;
-import org.elasticsearch.search.aggregations.metrics.percentiles.Percentile;
-import org.elasticsearch.search.aggregations.metrics.sum.InternalSum;
-import org.elasticsearch.search.aggregations.metrics.valuecount.InternalValueCount;
+import org.elasticsearch.search.aggregations.metrics.InternalGeoBounds;
+import org.elasticsearch.search.aggregations.metrics.InternalGeoCentroid;
+import org.elasticsearch.search.aggregations.metrics.InternalMax;
+import org.elasticsearch.search.aggregations.metrics.InternalMin;
+import org.elasticsearch.search.aggregations.metrics.Percentile;
+import org.elasticsearch.search.aggregations.metrics.InternalSum;
+import org.elasticsearch.search.aggregations.metrics.InternalValueCount;
 
 /**
  * Parses aggregation part of elasticsearch result. 

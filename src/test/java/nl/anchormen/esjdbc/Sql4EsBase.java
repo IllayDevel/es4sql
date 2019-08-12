@@ -11,13 +11,12 @@ import java.util.Collection;
 import org.elasticsearch.SpecialPermission;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.painless.PainlessPlugin;
 import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.transport.nio.NioTransportPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.elasticsearch.transport.Netty4Plugin;
 
 public class Sql4EsBase extends ESIntegTestCase {
 
@@ -127,7 +126,7 @@ public class Sql4EsBase extends ESIntegTestCase {
 
 	@Override
 	protected Collection<Class<? extends Plugin>> nodePlugins() {
-		return Arrays.asList(Netty4Plugin.class, PainlessPlugin.class);
+		return Arrays.asList(NioTransportPlugin.class);
 	}
 	
 }
