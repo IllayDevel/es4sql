@@ -20,7 +20,7 @@ public class UpdateITest extends Sql4EsBase {
 		createIndexTypeWithDocs(index, type, true, 10, 2);
 		refresh();
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		int res = st.executeUpdate("UPDATE "+type+" SET intNum = 100 WHERE intNum > 7");
 		assertEquals(2, res);
 		refresh();

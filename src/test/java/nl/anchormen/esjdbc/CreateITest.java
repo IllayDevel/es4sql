@@ -31,7 +31,7 @@ public class CreateITest extends Sql4EsBase {
 	@Test
 	public void createSimple() throws Exception{
 		createIndex(index);
-		Connection conn = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test");
+		Connection conn = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test");
 		Statement st = conn.createStatement();
 		boolean res = st.execute("CREATE TABLE simpletype (myString \"type:keyword\", myInt \"type:integer\", myDate \"type:date\")");
 		assert(!res);
@@ -71,7 +71,7 @@ public class CreateITest extends Sql4EsBase {
 	public void createAs() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10);
 		
-		Connection conn = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test");
+		Connection conn = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test");
 		Statement st = conn.createStatement();
 		int res = st.executeUpdate("CREATE TABLE type2 AS SELECT * from "+type);
 		assertEquals(10, res);

@@ -24,7 +24,7 @@ public class SubqueryITest extends Sql4EsBase {
 	public void testNestedSelects() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10, 0);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select * from (select * from "+type+") ");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(15, rsm.getColumnCount());
@@ -103,7 +103,7 @@ public class SubqueryITest extends Sql4EsBase {
 	public void testNestedSelectsOnAgg() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10, 0);
 
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select * from (select distinct bool from "+type+") ");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(1, rsm.getColumnCount());
@@ -183,7 +183,7 @@ public class SubqueryITest extends Sql4EsBase {
 	public void testNestedAggsOnSelects() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10, 0);
 
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select count(1) from (select 1 from "+type+") ");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(1, rsm.getColumnCount());

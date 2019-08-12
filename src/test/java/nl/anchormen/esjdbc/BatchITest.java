@@ -20,7 +20,7 @@ public class BatchITest extends Sql4EsBase {
 	
 	@Test
 	public void testAddingRemoving() throws SQLException{
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		st.addBatch("CREATE TABLE monkey (_id \"type:keyword\")");
 		st.addBatch("INSERT INTO monkey (myInt) VALUES (1)");
 		st.addBatch("INSERT INTO monkey (myInt) VALUES (2), (3), (4)");

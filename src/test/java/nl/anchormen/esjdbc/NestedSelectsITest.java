@@ -27,7 +27,7 @@ public class NestedSelectsITest extends Sql4EsBase {
 	public void testSingleObjectLateral() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 10, 1);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select * from "+type+" where nestedDoc.intNum <= 3");
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(26, rsm.getColumnCount());
@@ -74,7 +74,7 @@ public class NestedSelectsITest extends Sql4EsBase {
 	public void testMultipleObjectsLateral() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 5, 4);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		ResultSet rs = st.executeQuery("select * from "+type);
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(37, rsm.getColumnCount());
@@ -135,7 +135,7 @@ public class NestedSelectsITest extends Sql4EsBase {
 	public void testSingleObjectNested() throws Exception{
 		createIndexTypeWithDocs(index, type, true, 5, 4);
 		
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test&"+Utils.PROP_RESULT_NESTED_LATERAL+"=false").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test&"+Utils.PROP_RESULT_NESTED_LATERAL+"=false").createStatement();
 		ResultSet rs = st.executeQuery("select * from "+type);
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(15, rsm.getColumnCount());

@@ -18,7 +18,7 @@ public class NotSupportedITest extends Sql4EsBase {
 	@Test
 	public void testUnsupportedSyntax() throws SQLException{
 		createIndex(index);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		
 		try{
 			st.execute("SELECT something FROM type, (SELECT max(x) FROM type2) as type2 WHERE var = tpe2");
@@ -39,7 +39,7 @@ public class NotSupportedITest extends Sql4EsBase {
 	@Test
 	public void fieldNotCorrect() throws Exception{
 		createIndexTypeWithDocs(index, "mytype", true, 3);
-		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:8081/"+index+"?test").createStatement();
+		Statement st = DriverManager.getConnection("jdbc:sql4es://localhost:9300/"+index+"?test").createStatement();
 		st.execute("SELECT field_does_not_exist FROM mytype");
 		ResultSet rs = st.getResultSet();
 		while(rs.next()){

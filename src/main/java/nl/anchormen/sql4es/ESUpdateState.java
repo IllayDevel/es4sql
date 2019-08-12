@@ -452,19 +452,13 @@ public class ESUpdateState {
 		sb.append("{");
 		boolean templatesAdded = false;
 		if(create.getProperties().size() >= 0){
-/*			List<Property> props = create.getProperties();
+			List<Property> props = create.getProperties();
 			for (Property prop : props) {
 				if (prop.getName().getValue().equals("dynamic_templates")) {
 					sb.append("dynamic_templates:"+removeEnclosingQuotes( prop.getValue().toString()));
 					templatesAdded = true;
 				}
-			}*/
-            Map<String, Expression> props = create.getProperties();
-            if(props.containsKey("dynamic_templates")){
-                sb.append("dynamic_templates:"+removeEnclosingQuotes( props.get("dynamic_templates").toString()));
-                templatesAdded = true;
-            }
-			// add other 'index global' stuff
+			}
 		}
 		if(templatesAdded) sb.append(", ");
 		sb.append("\"properties\":{");
@@ -475,9 +469,14 @@ public class ESUpdateState {
 			sb.append("\""+field.getName()+"\":{\""+field.getType().replaceAll(":","\":\"")+"\"}");
 			if(i<fields.size()-1) sb.append(", ");
 		}
+		//for test
 		sb.append("}}"); // close type and properties blocks
 		String json = sb.toString().replaceAll("([\\[|{|,|:]\\s)*([\\w|\\-|\\*]+)(\\s*[\\]|}|:|,])", "$1\"$2\"$3");
-		
+
+		//for test
+		/*json = "{\"properties\":{\"sdfsdfsdfsdf\":{\"type\":\"text\"},\"tile\":{\"type\":\"object\"}}}";
+		System.out.println(json);*/
+
 		// create index if it does not yet exist
 		boolean indexExists = client.admin().indices().exists(new IndicesExistsRequest(index)).actionGet().isExists();
 		if(!indexExists){
