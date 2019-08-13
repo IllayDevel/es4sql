@@ -465,19 +465,25 @@ public class ESUpdateState {
             Map<String, Object> settings = new HashMap<>();
             if (index == null)
                 throw new SQLException("No index & type combination specified, please use 'CREATE TABLE [index.type]' ");
-            //////////////dirty code
-           /* StringBuilder sb = new StringBuilder();
-            sb.append("{");
-            boolean templatesAdded = false;
+
             if (create.getProperties().size() >= 0) {
                 List<Property> props = create.getProperties();
                 for (Property prop : props) {
                     if (prop.getName().getValue().equals("dynamic_templates")) {
-                        sb.append("dynamic_templates:" + removeEnclosingQuotes(prop.getValue().toString()));
-                        templatesAdded = true;
+                        System.out.println(removeEnclosingQuotes(prop.getValue().toString()));
+                    }
+                    //system parameters for create new index. Not working if index already exist
+                    if (prop.getName().getValue().equals("number_of_shards")) {
+                        settings.put("index.number_of_shards", removeEnclosingQuotes(prop.getValue().toString()));
+                    }
+                    if (prop.getName().getValue().equals("number_of_replicas")) {
+                        settings.put("index.number_of_replicas", removeEnclosingQuotes(prop.getValue().toString()));
+                    }
+                    if (prop.getName().getValue().equals("refresh_interval")) {
+                        settings.put("index.refresh_interval", removeEnclosingQuotes(prop.getValue().toString()));
                     }
                 }
-            }*/
+            }
             /////////////
             XContentBuilder map = XContentFactory.jsonBuilder();
             map.startObject().startObject("properties");
@@ -487,22 +493,6 @@ public class ESUpdateState {
                 if (field.getName().getValue().equals("_id") || field.getName().getValue().equals("_type"))
                     continue; // skip protected fields
                 String[] fieldType = removeEnclosingQuotes(field.getType()).split(":");
-                //system parameters for create new index. Not working if index already exist
-                if (field.getName().getValue().equals("_number_of_shards")) {
-                    if (fieldType[0].equals("value"))
-                        settings.put("index.number_of_shards", fieldType[1]);
-                    continue;
-                }
-                if (field.getName().getValue().equals("_number_of_replicas")) {
-                    if (fieldType[0].equals("value"))
-                        settings.put("index.number_of_replicas", fieldType[1]);
-                    continue;
-                }
-                if (field.getName().getValue().equals("_refresh_interval")) {
-                    if (fieldType[0].equals("value"))
-                        settings.put("index.refresh_interval", fieldType[1]);
-                    continue;
-                }
                 map.startObject(field.getName().getValue());
                 map.field(fieldType[0], fieldType[1]);
                 map.endObject();
