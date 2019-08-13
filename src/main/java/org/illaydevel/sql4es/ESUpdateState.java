@@ -1,6 +1,7 @@
 package org.illaydevel.sql4es;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -45,6 +46,11 @@ import org.illaydevel.sql4es.parse.sql.RelationParser;
 import org.illaydevel.sql4es.parse.sql.SelectParser;
 import org.illaydevel.sql4es.parse.sql.UpdateParser;
 import org.illaydevel.sql4es.parse.sql.WhereParser;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 /**
  * Responsible for execution of update statements (CREATE, INSERT, DELETE).
@@ -441,6 +447,34 @@ public class ESUpdateState {
     }
 
     // ------------------------------------[ CREATE TABLE / VIEW ]--------------------------------------
+    private String removeEnclosingQuotes(String text) {
+        String trimmed = text.trim();
+        if (trimmed.startsWith("\"")) return trimmed.substring(1, trimmed.length() - 1);
+        return text;
+    }
+    private String removeEnclosingSingleQuotes(String text) {
+        String trimmed = text.trim();
+        if (trimmed.startsWith("'")) return trimmed.substring(1, trimmed.length() - 1);
+        return text;
+    }
+
+    private XContentBuilder generateMappingRule(XContentBuilder map, JsonObject jsonObject) {
+        jsonObject.forEach((key, value) -> {
+            try {
+                if (value.getValueType()==JsonValue.ValueType.OBJECT) {
+                    map.startObject(key);
+                    generateMappingRule(map,value.asJsonObject());
+                    map.endObject();
+                } else {
+                    map.field(key,removeEnclosingQuotes(value.toString()));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return map;
+    }
 
     /**
      * Creates a type (and possibly a new index) using the CREATE TABLE definition. If the table to be created contains a dot
@@ -466,11 +500,19 @@ public class ESUpdateState {
             if (index == null)
                 throw new SQLException("No index & type combination specified, please use 'CREATE TABLE [index.type]' ");
 
+            XContentBuilder map = XContentFactory.jsonBuilder();
+            map.startObject();
+
             if (create.getProperties().size() >= 0) {
                 List<Property> props = create.getProperties();
                 for (Property prop : props) {
-                    if (prop.getName().getValue().equals("dynamic_templates")) {
-                        System.out.println(removeEnclosingQuotes(prop.getValue().toString()));
+                    if (prop.getName().getValue().equals("mappings")) {
+                        map.startObject("mappings");
+                        JsonReader jsonReader = Json.createReader(new StringReader(removeEnclosingSingleQuotes(prop.getValue().toString())));
+                        JsonObject jsonObject = jsonReader.readObject();
+                        jsonReader.close();
+                        generateMappingRule(map,jsonObject);
+                        map.endObject();
                     }
                     //system parameters for create new index. Not working if index already exist
                     if (prop.getName().getValue().equals("number_of_shards")) {
@@ -484,9 +526,8 @@ public class ESUpdateState {
                     }
                 }
             }
-            /////////////
-            XContentBuilder map = XContentFactory.jsonBuilder();
-            map.startObject().startObject("properties");
+
+            map.startObject("properties");
             List<TableElement> fields = create.getElements();
             for (int i = 0; i < fields.size(); i++) {
                 ColumnDefinition field = (ColumnDefinition) fields.get(i);
@@ -520,12 +561,6 @@ public class ESUpdateState {
             throw new SQLException("Table creation failed due IO exception");
         }
         return 0; // default SQL result for a statement that does not manipulate any rows
-    }
-
-    private String removeEnclosingQuotes(String text) {
-        String trimmed = text.trim();
-        if (trimmed.startsWith("\"")) return trimmed.substring(1, trimmed.length() - 1);
-        return text;
     }
 
     /**
