@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.illaydevel</groupId>
     <artifactId>sql4es</artifactId>
-    <version>0.9.3.0</version>
+    <version>0.9.4.0</version>
     <packaging>jar</packaging>
     <name>sql-4-elasticsearch</name>
     <url>https://github.com/IllayDevel/es4sql</url>
