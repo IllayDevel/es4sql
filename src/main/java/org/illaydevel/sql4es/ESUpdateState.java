@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.autolog.Context;
 import com.facebook.presto.sql.tree.*;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
@@ -551,7 +550,7 @@ public class ESUpdateState {
                 if (!response.isAcknowledged())
                     throw new SQLException("Table creation failed because database '" + index + "' could not be created");
             } else {
-                PutMappingRequestBuilder putMappingRequestBuilder = Context.getAutologNodeClient().admin().indices().preparePutMapping(index);
+                PutMappingRequestBuilder putMappingRequestBuilder = client.admin().indices().preparePutMapping(index);
                 putMappingRequestBuilder = putMappingRequestBuilder.setSource(map).setType(type);
                 AcknowledgedResponse response = putMappingRequestBuilder.execute().actionGet();
                 if (!response.isAcknowledged()) throw new SQLException("Table creation failed due to unknown reason");
