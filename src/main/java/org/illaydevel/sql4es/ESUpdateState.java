@@ -90,7 +90,7 @@ public class ESUpdateState {
         if (idx > 0) {
             return new String[]{target.substring(0, idx), target.substring(idx + 1)};
         }
-        return new String[]{defaultIndex, target};
+        return new String[]{target, target};
     }
 
     /**
@@ -451,6 +451,7 @@ public class ESUpdateState {
         if (trimmed.startsWith("\"")) return trimmed.substring(1, trimmed.length() - 1);
         return text;
     }
+
     private String removeEnclosingSingleQuotes(String text) {
         String trimmed = text.trim();
         if (trimmed.startsWith("'")) return trimmed.substring(1, trimmed.length() - 1);
@@ -460,12 +461,12 @@ public class ESUpdateState {
     private XContentBuilder generateMappingRule(XContentBuilder map, JsonObject jsonObject) {
         jsonObject.forEach((key, value) -> {
             try {
-                if (value.getValueType()==JsonValue.ValueType.OBJECT) {
+                if (value.getValueType() == JsonValue.ValueType.OBJECT) {
                     map.startObject(key);
-                    generateMappingRule(map,value.asJsonObject());
+                    generateMappingRule(map, value.asJsonObject());
                     map.endObject();
                 } else {
-                    map.field(key,removeEnclosingQuotes(value.toString()));
+                    map.field(key, removeEnclosingQuotes(value.toString()));
                 }
 
             } catch (IOException e) {
@@ -510,7 +511,7 @@ public class ESUpdateState {
                         JsonReader jsonReader = Json.createReader(new StringReader(removeEnclosingSingleQuotes(prop.getValue().toString())));
                         JsonObject jsonObject = jsonReader.readObject();
                         jsonReader.close();
-                        generateMappingRule(map,jsonObject);
+                        generateMappingRule(map, jsonObject);
                         map.endObject();
                     }
                     //system parameters for create new index. Not working if index already exist
