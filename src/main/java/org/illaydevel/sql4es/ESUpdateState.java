@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import com.autolog.Context;
 import com.facebook.presto.sql.tree.*;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
@@ -461,6 +462,7 @@ public class ESUpdateState {
             String[] indexAndType = this.getIndexAndType(create.getName().toString(), sql, "table\\s+", "\\s+\\(", index);
             index = indexAndType[0];
             String type = indexAndType[1];
+            Map<String, Object> settings = new HashMap<>();
             if (index == null)
                 throw new SQLException("No index & type combination specified, please use 'CREATE TABLE [index.type]' ");
             //////////////dirty code
@@ -482,9 +484,26 @@ public class ESUpdateState {
             List<TableElement> fields = create.getElements();
             for (int i = 0; i < fields.size(); i++) {
                 ColumnDefinition field = (ColumnDefinition) fields.get(i);
-                if (field.getName().equals("_id") || field.getName().equals("_type")) continue; // skip protected fields
-                map.startObject(field.getName().getValue());
+                if (field.getName().getValue().equals("_id") || field.getName().getValue().equals("_type"))
+                    continue; // skip protected fields
                 String[] fieldType = removeEnclosingQuotes(field.getType()).split(":");
+                //system parameters for create new index. Not working if index already exist
+                if (field.getName().getValue().equals("_number_of_shards")) {
+                    if (fieldType[0].equals("value"))
+                        settings.put("index.number_of_shards", fieldType[1]);
+                    continue;
+                }
+                if (field.getName().getValue().equals("_number_of_replicas")) {
+                    if (fieldType[0].equals("value"))
+                        settings.put("index.number_of_replicas", fieldType[1]);
+                    continue;
+                }
+                if (field.getName().getValue().equals("_refresh_interval")) {
+                    if (fieldType[0].equals("value"))
+                        settings.put("index.refresh_interval", fieldType[1]);
+                    continue;
+                }
+                map.startObject(field.getName().getValue());
                 map.field(fieldType[0], fieldType[1]);
                 map.endObject();
             }
@@ -493,7 +512,11 @@ public class ESUpdateState {
             // create index if it does not yet exist
             boolean indexExists = client.admin().indices().exists(new IndicesExistsRequest(index)).actionGet().isExists();
             if (!indexExists) {
-                CreateIndexResponse response = client.admin().indices().prepareCreate(index).addMapping(type, map).get();
+                CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(index);
+                if (settings.size() > 0) {
+                    createIndexRequestBuilder.setSettings(settings);
+                }
+                CreateIndexResponse response = createIndexRequestBuilder.addMapping(type, map).get();
                 if (!response.isAcknowledged())
                     throw new SQLException("Table creation failed because database '" + index + "' could not be created");
             } else {
